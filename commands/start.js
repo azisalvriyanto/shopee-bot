@@ -45,10 +45,11 @@ module.exports = async function (ctx) {
         await data.tasks.notification.stop()
         await data.tasks.notification.destroy()
     }, {
+        name: `${data.telegramInfo.username} - ${data.shopeeInfo.login.status.data.userid} - notification`,
         scheduled: true,
         timezone: process.env.TIMEZONE
     })
-    data.tasks.notification.start()
+    await data.tasks.notification.start()
 
     var text = ''
     data.tasks.bot = cron.schedule(`${dateTime.getMinutes()} ${dateTime.getHours()} * * *`, async function() {
@@ -164,8 +165,9 @@ module.exports = async function (ctx) {
 
         return console.log(chalk.blue(`[info] bot has been finished.`))
     }, {
+        name: `${data.telegramInfo.username} - ${data.shopeeInfo.login.status.data.userid} - bot`,
         scheduled: true,
         timezone: process.env.TIMEZONE
     })
-    data.tasks.bot.start()
+    await data.tasks.bot.start()
 }
