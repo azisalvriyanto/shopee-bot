@@ -53,13 +53,13 @@ module.exports = async function (ctx) {
 
     var text = ''
     data.tasks.bot = cron.schedule(`${dateTime.getMinutes()} ${dateTime.getHours()} * * *`, async function() {
+        await sleep(13);
+
         text += `\n<pre>[Start Time]</pre>`
         text += `\n<pre>${new Date()}</pre>`
         text += `\n`
         text += '\n<pre>[Add To Cart]</pre>'
         text += `\n<pre>Name: ${data.targetInfo.product.detail.item.name}</pre>`
-
-        await sleep(0001);
 
         await postCart(data).then(async ({
             statusCode,
