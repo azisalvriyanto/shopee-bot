@@ -13,6 +13,20 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const Data = require('./models/Data');
 
+const express = require('express')
+const app = express()
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(chalk.blue(`[info] App is running on port ${ PORT }`));
+});
+
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
+app.get('/', (req, res) => {
+    res.render("index");
+})
+
 const {
     generateString
 } = require('./helpers')
