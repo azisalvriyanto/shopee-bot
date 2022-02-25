@@ -4,3 +4,4 @@
 .env.backup
 package-lock.json
 yarn.lock
+README.md

@@ -12,14 +12,15 @@ const postOrder = require('../requests/buyings/postOrder');
 const {
     setNewCookie,
     handleRupiahFormat,
+    sleep
 } = require('../helpers')
 
 module.exports = async function (ctx) {
     let data = ctx.data;
 
     await ctx.replyWithHTML(`<b>[Running]</b>`)
-    const dateTime = new Date(data.targetInfo.time)
-    const currentTime = new Date()
+    let dateTime = new Date(data.targetInfo.time)
+    let currentTime = new Date()
     currentTimeString = currentTime.getFullYear() + '-' + ("0" + (currentTime.getMonth()+1)).slice(-2) + '-' + ("0" + currentTime.getDate()).slice(-2) + ' ' + ("0" + currentTime.getHours()).slice(-2) + ':' + ("0" + currentTime.getMinutes()).slice(-2) + ':' + ("0" + currentTime.getSeconds()).slice(-2)
     if (dateTime >= currentTime) {
         await ctx.replyWithHTML(`<pre>It's ${currentTimeString} now. The notification will be sent to you a minute before flashsale time at ${data.targetInfo.time}.\n\nProduct Name: ${data.targetInfo.product.detail.item.name}</pre>`)
@@ -31,18 +32,21 @@ module.exports = async function (ctx) {
             isRan: data.isRan
         }).exec()
     } else {
-        currentTime.setMinutes(currentTime.getMinutes() + 5);
-        currentTimeStringTemp = currentTime.getFullYear() + '-' + ("0" + (currentTime.getMonth()+1)).slice(-2) + '-' + ("0" + currentTime.getDate()).slice(-2) + ' ' + ("0" + currentTime.getHours()).slice(-2) + ':' + ("0" + currentTime.getMinutes()).slice(-2) + ':00'
+        currentTime.setMinutes(currentTime.getMinutes() + 5)
+        let currentTimeStringTemp = currentTime.getFullYear() + '-' + ("0" + (currentTime.getMonth()+1)).slice(-2) + '-' + ("0" + currentTime.getDate()).slice(-2) + ' ' + ("0" + currentTime.getHours()).slice(-2) + ':' + ("0" + currentTime.getMinutes()).slice(-2) + ':00'
         return ctx.replyWithHTML(`<pre>It's ${currentTimeString} now and the flashsale time is ${data.targetInfo.time}. The flashsale time is smaller than current time, please change the flashsale time to future time.\n\nExample: </pre><pre>/set -time ${currentTimeStringTemp}</pre>`)
     }
 
-    const dateTimeTemp = new Date(data.targetInfo.time)
+    let dateTimeTemp = new Date(data.targetInfo.time)
     dateTimeTemp.setMinutes(dateTimeTemp.getMinutes() - 1);
     data.tasks.notification = cron.schedule(`${dateTimeTemp.getMinutes()} ${dateTimeTemp.getHours()} * * *`, async function() {
-        await ctx.replyWithHTML(`<pre>A minute left, please wait.</pre>`)
+        await ctx.replyWithHTML(`<pre>A minute left, please wait.\n\nProduct Name: ${data.targetInfo.product.detail.item.name}</pre>`)
 
         await data.tasks.notification.stop()
         await data.tasks.notification.destroy()
+    }, {
+        scheduled: true,
+        timezone: process.env.TIMEZONE
     })
     data.tasks.notification.start()
 
@@ -51,8 +55,11 @@ module.exports = async function (ctx) {
         text += `\n<pre>[Start Time]</pre>`
         text += `\n<pre>${new Date()}</pre>`
         text += `\n`
-        text += '\n<pre>[Add To Product]</pre>'
+        text += '\n<pre>[Add To Cart]</pre>'
         text += `\n<pre>Name: ${data.targetInfo.product.detail.item.name}</pre>`
+
+        await sleep(0001);
+
         await postCart(data).then(async ({
             statusCode,
             body,
@@ -155,7 +162,10 @@ module.exports = async function (ctx) {
         await data.tasks.bot.stop()
         await data.tasks.bot.destroy()
 
-        return console.log(chalk.blue(`[info] bot finished`))
+        return console.log(chalk.blue(`[info] bot has been finished.`))
+    }, {
+        scheduled: true,
+        timezone: process.env.TIMEZONE
     })
     data.tasks.bot.start()
 }

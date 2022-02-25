@@ -64,7 +64,6 @@ module.exports = function () {
     };
 
     this.setBody = (fieldsObj) => {
-
         if (typeof fieldsObj !== 'string') {
             fieldsObj = querystring.stringify(fieldsObj)
         }

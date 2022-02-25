@@ -44,10 +44,27 @@ module.exports = function (ctx) {
                 parse_mode: 'HTML'
             })
             body = typeof body == 'string' ? JSON.parse(body) : body
-            if (body && !body.error) return ctx.reply(`<pre>You have been logged.</pre>`, {
-                parse_mode: 'HTML'
-            })
             data.shopeeInfo.profile.address = body
+            if (body && !body.error) {
+                await Data.updateOne({
+                    chatId: ctx.message.chat.id
+                }, {
+                    shopeeInfo: {
+                        ...data.shopeeInfo,
+                        profile: {
+                            ...data.shopeeInfo.profile,
+                            address: data.shopeeInfo.profile.address,
+                        }
+                    },
+                }).exec(async (err, res) => {
+                    if (err) return ctx.reply(`Data update failed`).then(() => console.log(chalk.red(`[error] ${err}`))).catch((err) => console.log(chalk.red(`[error] ${err}`)))
+                    console.log(chalk.green(`[success] account loged successfully`))
+                })
+
+                return ctx.reply(`<pre>You have been logged.</pre>`, {
+                    parse_mode: 'HTML'
+                })
+            }
         }
 
         await getLogin(data).then(({

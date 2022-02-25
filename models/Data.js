@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const findOrCreate = require('mongoose-findorcreate');
 
-module.exports = mongoose.model('shopee', new mongoose.Schema({
+module.exports = mongoose.model(process.env.DATABASE_NAME, new mongoose.Schema({
     chatId: Number,
     telegramInfo: {
         username: String,

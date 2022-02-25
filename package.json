@@ -1,10 +1,10 @@
 {
     "name": "shopee-bot",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "",
     "main": "main.js",
     "scripts": {
-        "start": "TZ='Asia/Jakarta' nodemon --max-old-space-size=1024 --stack-trace-limit=0 main.js"
+        "start": "nodemon --max-old-space-size=1024 --stack-trace-limit=0 main.js"
     },
     "repository": {
         "type": "git",

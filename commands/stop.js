@@ -9,12 +9,13 @@ module.exports = async function (ctx) {
         isRan: false,
     }).exec(async (err, res) => {
         if (err) return ctx.replyWithHTML(`<pre>Stop the bot failed</pre>`)
+        await ctx.replyWithHTML(`<pre>Stop the bot successfully</pre>`)
 
-        // await data.tasks.notification.stop()
-        // await data.tasks.notification.destroy()
-        // await data.tasks.bot.stop()
-        // await data.tasks.bot.destroy()
+        await data.tasks.notification.stop()
+        await data.tasks.notification.destroy()
+        await data.tasks.bot.stop()
+        await data.tasks.bot.destroy()
 
-        return ctx.replyWithHTML(`<pre>Stop the bot successfully</pre>`)
+        return console.log(chalk.blue(`[info] bot has been stopped.`))
     })
 }

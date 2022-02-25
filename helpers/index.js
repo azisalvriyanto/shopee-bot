@@ -22,12 +22,6 @@ const setNewCookie = function (oldCookies, newCookies) {
     console.log(chalk.blue(`[info] set cookies successfully`))
 }
 
-const sleep = async function (ms) {
-    return new Promise(
-        resolve => setTimeout(resolve, ms)
-    );
-}
-
 const getCommands = function (str) {
     return str.split(' ')
 }
@@ -130,6 +124,12 @@ const handleRupiahFormat = (number, prefix) => {
 
     rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
     return (nominal < 0 ? '- ' : '') + (prefix == undefined ? ("Rp" + rupiah) : (rupiah ? prefix + rupiah : 0));
+}
+
+const sleep = async (millisecond) => {
+    return new Promise(
+        resolve => setTimeout(resolve, millisecond)
+    );
 }
 
 module.exports = {

@@ -126,7 +126,7 @@ bot.use((ctx, next) => {
         if (process.env.APP_ENV == 'development') {
             return ctx.reply(`Bot is maintenanced, please contact @azisalvriyanto`).then(() => console.log(chalk.red(`[error] ${ctx.data.chatId} try accessing Bot`)))
         } else if (ctx.data.isRan == true && ctx.message.text != '/stop') {
-            return ctx.replyWithHTML(`<pre>Bot still run, please stop for using again by this command:</pre>\n/stop`).then(() => console.log(chalk.red(`[error] Bot still run, please stop for using again.`)))
+            return ctx.replyWithHTML(`<pre>Bot still run.\n\nProduct Name  : ${ctx.data.targetInfo.product.detail.item.name}\nFlashsale Time: ${ctx.data.targetInfo.time}\nUrl Product   : </pre>${ctx.data.targetInfo.product.url}<pre>\n\nPlease stop for using it again by this command: </pre>/stop`).then(() => console.log(chalk.red(`[error] Bot still run, please stop for using it again.`)))
         }
 
         return next(ctx)

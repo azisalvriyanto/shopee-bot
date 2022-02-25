@@ -20,7 +20,21 @@ module.exports = async function (data) {
       'accept-language: en-US,en;q=0.9',
       `cookie: ${curl.serializeCookie(data.shopeeInfo.cookies)}`
     ]).setBody(JSON.stringify({
-      phone: data.shopeeInfo.profile.phone,
+      ...function (profile) {
+        if (profile.username != null) {
+            return {
+              username: data.shopeeInfo.profile.username
+            }
+        } else if (profile.phone != null) {
+            return {
+              phone: data.shopeeInfo.profile.phone
+            }
+        } else if (profile.email != null) {
+            return {
+              email: data.shopeeInfo.profile.email
+            }
+        }
+      }(data.shopeeInfo.profile),
       password: data.shopeeInfo.profile.password,
       support_whats_app: true,
       support_ivs: true,

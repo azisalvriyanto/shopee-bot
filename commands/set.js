@@ -50,11 +50,13 @@ module.exports = async function (ctx) {
 
         if (validateProductUrl.err) {
             return ctx.replyWithHTML(`<pre>${validateProductUrl.err}, please correct the link: </pre>${validateProductUrl.data.url}`)
-        } else {
-            productUrl = validateProductUrl.data.url
-            await ctx.replyWithHTML(`<pre>Set product using </pre>${productUrl}`)
         }
 
+        if (data.targetInfo == undefined) {
+            data.targetInfo = {
+                product: {}
+            }
+        }
         data.targetInfo.product = {
             url: productUrl,
             shopId: validateProductUrl.data.shopId,
@@ -79,10 +81,17 @@ module.exports = async function (ctx) {
                 data.targetInfo.product.itemId = data.targetInfo.product.detail.item.itemid
 
                 var modelText = ''
-                data.targetInfo.product.detail.item.models.forEach((model, j) => {
-                    modelText += `\n<pre>[${(j = j+1) <= 9 ? '0' : ''}${j}] ${model.name}\n     </pre><pre>/set -model ${model.modelid}</pre>`
-                })
-                await ctx.replyWithHTML(`<pre>Product Information\nName    : ${data.targetInfo.product.detail.item.name}\nShop Id : ${data.targetInfo.product.shopId}\nItem Id : ${data.targetInfo.product.itemId}\nModel Id: ${data.targetInfo.product.modelId}\n\nPlease set model id for selecting the item using these commands.</pre>${modelText}`)
+                if (data.targetInfo.product.detail.item.models.length === 1) {
+                    data.targetInfo.product.model = data.targetInfo.product.detail.item.models[0]
+                    data.targetInfo.product.modelId = data.targetInfo.product.model.modelid
+                } else {
+                    data.targetInfo.product.detail.item.models.forEach((model, j) => {
+                        modelText += `\n<pre>[${(j = j+1) <= 9 ? '0' : ''}${j}] ${model.name}\n     </pre><pre>/set -model ${model.modelid}</pre>`
+                    })
+
+                    modelText = `<pre>\n\nPlease set model id for selecting the item using these commands.` + modelText
+                }
+                await ctx.replyWithHTML(`<pre>Product Information\nName    : ${data.targetInfo.product.detail.item.name}\nShop Id : ${data.targetInfo.product.shopId}\nItem Id : ${data.targetInfo.product.itemId}\nModel Id: ${data.targetInfo.product.modelId}\nUrl     : </pre>${data.targetInfo.product.url}${modelText}`)
             } else {
                 data.targetInfo.product.shopId = null
                 data.targetInfo.product.itemId = null
@@ -134,10 +143,13 @@ module.exports = async function (ctx) {
 
         data.targetInfo.time = data.commands[2] + ' ' + data.commands[3]
         if (Date.parse(`${data.targetInfo.time} `)) {
-            ctx.replyWithHTML(`<pre>You will start flashsale at ${data.targetInfo.time}</pre>`)
+            ctx.replyWithHTML(`<pre>You will start flashsale at ${data.targetInfo.time}, please click </pre>/start <pre>to start bot.</pre>`)
         } else {
             data.targetInfo.time == null
-            ctx.replyWithHTML(`<pre>Set flashsale time failed, use this format:\n</pre><pre>/set -time YYYY-MM-DD HH:ii:ss</pre>\n\n<pre>Example: </pre><pre>/set -time 2022-02-08 09:08:00</pre>`)
+            let currentTime = new Date()
+            currentTime.setMinutes(currentTime.getMinutes() + 5)
+            let currentTimeStringTemp = currentTime.getFullYear() + '-' + ("0" + (currentTime.getMonth() + 1)).slice(-2) + '-' + ("0" + currentTime.getDate()).slice(-2) + ' ' + ("0" + currentTime.getHours()).slice(-2) + ':' + ("0" + currentTime.getMinutes()).slice(-2) + ':00'
+            ctx.replyWithHTML(`<pre>Set flashsale time failed, use this format:\n</pre><pre>/set -time yyyy-mm-dd hh:ii:ss</pre>\n\n<pre>Example: </pre><pre>/set -time ${currentTimeStringTemp}</pre>`)
         }
 
         return Data.updateOne({
@@ -232,5 +244,7 @@ module.exports = async function (ctx) {
         }).exec(async (err, res) => {
             if (err) return ctx.replyWithHTML(`<pre>Set logistic failed</pre>`).then(() => console.log(chalk.red(`[error] ${err}`))).catch((err) => console.log(chalk.red(`[error] ${err}`)))
         })
+    } else {
+        if (err) return ctx.replyWithHTML(`<pre>Command not found</pre>`).then(() => console.log(chalk.red(`[error] Command not found`))).catch((err) => console.log(chalk.red(`[error] Command not found`)))
     }
 }
