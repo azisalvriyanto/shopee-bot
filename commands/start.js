@@ -53,7 +53,9 @@ module.exports = async function (ctx) {
 
     var text = ''
     data.tasks.bot = cron.schedule(`${dateTime.getMinutes()} ${dateTime.getHours()} * * *`, async function() {
-        await sleep(13);
+        if (process.env.SLEEP != 0) {
+            await sleep(process.env.SLEEP);
+        }
 
         text += `\n<pre>[Start Time]</pre>`
         text += `\n<pre>${new Date()}</pre>`
