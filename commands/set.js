@@ -89,7 +89,7 @@ module.exports = async function (ctx) {
                         modelText += `\n<pre>[${(j = j+1) <= 9 ? '0' : ''}${j}] ${model.name}\n     </pre><pre>/set -model ${model.modelid}</pre>`
                     })
 
-                    modelText = `<pre>\n\nPlease set model id for selecting the item using these commands.` + modelText
+                    modelText = `<pre>\n\nPlease set model id for selecting the item using these commands.` + modelText + `</pre>`
                 }
                 await ctx.replyWithHTML(`<pre>Product Information\nName    : ${data.targetInfo.product.detail.item.name}\nShop Id : ${data.targetInfo.product.shopId}\nItem Id : ${data.targetInfo.product.itemId}\nModel Id: ${data.targetInfo.product.modelId}\nUrl     : </pre>${data.targetInfo.product.url}${modelText}`)
             } else {
